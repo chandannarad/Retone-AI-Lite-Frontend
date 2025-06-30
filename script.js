@@ -1,55 +1,44 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const analyzeBtn = document.getElementById("analyzeBtn");
-  const inputText = document.getElementById("userInput");
-  const resultBox = document.getElementById("resultBox");
-  const popup = document.getElementById("popup");
+async function analyzeText() {
+  const text = document.getElementById("userText").value;
+  const resultsDiv = document.getElementById("results");
+  const popup = document.getElementById("warningPopup");
+  resultsDiv.innerHTML = "<p>Analyzing...</p>";
 
-  analyzeBtn.addEventListener("click", analyzeText);
-  inputText.addEventListener("keydown", function (e) {
-    if (e.key === "Enter") {
-      e.preventDefault(); // Prevents new line
+  const response = await fetch("https://retone-ai-lite.onrender.com/analyze", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text })
+  });
+
+  const data = await response.json();
+
+  if ((data["TOXICITY"] || 0) >= 40 || 
+      (data["INSULT"] || 0) >= 30 || 
+      (data["THREAT"] || 0) >= 20 || 
+      (data["PROFANITY"] || 0) >= 30) {
+    popup.classList.add("show");
+    setTimeout(() => popup.classList.remove("show"), 5000);
+  }
+
+  resultsDiv.innerHTML = "<h3>Analysis Result:</h3>";
+  const attributes = ["TOXICITY", "INSULT", "PROFANITY", "THREAT"];
+
+  attributes.forEach(attr => {
+    const score = data[attr] || 0;
+    resultsDiv.innerHTML += `
+      <div class="label">${attr}: ${score}%</div>
+      <div class="bar" style="width:${score}%;"></div>
+    `;
+  });
+}
+
+// Listen for Enter key to submit text
+document.addEventListener("DOMContentLoaded", function () {
+  const textarea = document.getElementById("userText");
+  textarea.addEventListener("keydown", function (event) {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
       analyzeText();
     }
   });
-
-  function analyzeText() {
-    const text = inputText.value.trim();
-    if (!text) return;
-
-    fetch("https://retone-ai-lite.onrender.com/analyze", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ text: text })
-    })
-      .then(response => response.json())
-      .then(data => {
-        resultBox.innerHTML = ""; // Clear old results
-        let toxicThreshold = 0.75;
-
-        for (let attr in data) {
-          let percentage = data[attr].toFixed(2) + "%";
-
-          let bar = document.createElement("div");
-          bar.className = "bar";
-          bar.style.width = percentage;
-          bar.style.backgroundColor = "red";
-          bar.textContent = `${attr}: ${percentage}`;
-          resultBox.appendChild(bar);
-        }
-
-        if (data.TOXICITY && data.TOXICITY >= toxicThreshold * 100) {
-          popup.style.display = "block";
-          popup.textContent = "⚠️ The message appears too toxic to send!";
-        } else {
-          popup.style.display = "none";
-        }
-      })
-      .catch(error => {
-        console.error("Error analyzing text:", error);
-        popup.style.display = "block";
-        popup.textContent = "❌ Error connecting to the server.";
-      });
-  }
 });
