@@ -1,17 +1,23 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const resultDiv = document.getElementById("result");
+document.addEventListener("DOMContentLoaded", () => {
+  const textarea = document.getElementById("textInput");
   const popup = document.getElementById("popup");
+  const resultDiv = document.getElementById("result");
 
-  // Hide popup initially
-  popup.classList.remove("show");
+  // Submit on Enter key
+  textarea.addEventListener("keydown", function (event) {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      analyzeText();
+    }
+  });
 
   window.analyzeText = async function () {
-    const inputText = document.getElementById("textInput").value.trim();
+    const text = textarea.value.trim();
     resultDiv.innerHTML = "";
-    popup.classList.remove("show");
+    popup.classList.add("hidden");
 
-    if (!inputText) {
-      resultDiv.innerHTML = "Please enter some text.";
+    if (!text) {
+      resultDiv.innerHTML = "<p>Please enter some text.</p>";
       return;
     }
 
@@ -19,32 +25,39 @@ document.addEventListener("DOMContentLoaded", function () {
       const response = await fetch("https://retone-ai-lite.onrender.com/analyze", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/json"
         },
-        body: JSON.stringify({ text: inputText }),
+        body: JSON.stringify({ text })
       });
 
       const data = await response.json();
 
-      if (data && Object.keys(data).length > 0) {
-        let output = "<h3>Tone Analysis Result:</h3><ul>";
-        for (let key in data) {
-          output += `<li><strong>${key}:</strong> ${data[key]}%</li>`;
-        }
-        output += "</ul>";
-        resultDiv.innerHTML = output;
-
-        // Show popup if toxicity or insult exceeds threshold
-        if ((data.TOXICITY || 0) > 70 || (data.INSULT || 0) > 70) {
-          popup.classList.add("show");
-          setTimeout(() => popup.classList.remove("show"), 4000);
-        }
-      } else {
-        resultDiv.innerHTML = "No tone scores found.";
+      if (!data || !data.scores) {
+        resultDiv.innerHTML = "<p>Something went wrong. Try again later.</p>";
+        return;
       }
-    } catch (error) {
-      console.error("Error:", error);
-      resultDiv.innerHTML = "An error occurred. Please try again.";
+
+      // Display scores
+      const resultList = document.createElement("ul");
+      for (const [key, value] of Object.entries(data.scores)) {
+        const item = document.createElement("li");
+        item.textContent = `${key}: ${value}%`;
+        resultList.appendChild(item);
+      }
+      resultDiv.appendChild(resultList);
+
+      // Trigger popup if any score is above threshold (e.g., 75%)
+      const toxicThreshold = 75;
+      const isToxic = Object.values(data.scores).some(score => score >= toxicThreshold);
+      if (isToxic) {
+        popup.classList.remove("hidden");
+        popup.classList.add("show");
+        setTimeout(() => popup.classList.remove("show"), 4000);
+      }
+
+    } catch (err) {
+      resultDiv.innerHTML = "<p>Failed to analyze the text.</p>";
+      console.error(err);
     }
   };
 });
