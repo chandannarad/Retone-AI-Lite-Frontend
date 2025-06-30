@@ -2,20 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Retone AI Lite</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
-    <h1>🧠 Retone AI Lite</h1>
-    <p>Check your message for toxicity and offensive tone before sending.</p>
-    <textarea id="userText" placeholder="Type your message here..."></textarea>
-    <button onclick="analyzeText()">Analyze Tone</button>
-    <div class="results" id="results"></div>
-  </div>
+    <h1>Retone AI Lite</h1>
+    <p>Enter a message to check if it’s toxic or offensive:</p>
 
-  <div id="warningPopup">
-    ⚠️ <strong>Warning:</strong> Your message may contain harmful or offensive language.
+    <textarea id="textInput" placeholder="Type your message here..."></textarea>
+
+    <button onclick="analyzeText()">Analyze Tone</button>
+
+    <div id="result"></div>
   </div>
 
   <script src="script.js"></script>
