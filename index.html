@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Retone AI Lite</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>🧠 Retone AI Lite</h1>
+    <p>Check your message for toxicity and offensive tone before sending.</p>
+    <textarea id="userText" placeholder="Type your message here..."></textarea>
+    <button onclick="analyzeText()">Analyze Tone</button>
+    <div class="results" id="results"></div>
+  </div>
+
+  <div id="warningPopup">
+    ⚠️ <strong>Warning:</strong> Your message may contain harmful or offensive language.
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
