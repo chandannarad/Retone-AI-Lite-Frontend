@@ -15,13 +15,33 @@ body {
   background-color: #1e1e1e;
   padding: 30px;
   border-radius: 16px;
+<<<<<<< HEAD
   box-shadow: 0 0 20px rgba(0,0,0,0.5);
+=======
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+>>>>>>> 81f60ea2fb4b04a71f9b895bbf44bfbb6b43a979
   animation: fadeIn 0.5s ease;
 }
 
 @keyframes fadeIn {
+<<<<<<< HEAD
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
+=======
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+>>>>>>> 81f60ea2fb4b04a71f9b895bbf44bfbb6b43a979
 }
 
 h1 {

@@ -41,4 +41,8 @@ document.addEventListener("DOMContentLoaded", function () {
       analyzeText();
     }
   });
+<<<<<<< HEAD
 });
+=======
+});
+>>>>>>> 81f60ea2fb4b04a71f9b895bbf44bfbb6b43a979
