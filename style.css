@@ -15,19 +15,11 @@ body {
   background-color: #1e1e1e;
   padding: 30px;
   border-radius: 16px;
-<<<<<<< HEAD
-  box-shadow: 0 0 20px rgba(0,0,0,0.5);
-=======
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
->>>>>>> 81f60ea2fb4b04a71f9b895bbf44bfbb6b43a979
   animation: fadeIn 0.5s ease;
 }
 
 @keyframes fadeIn {
-<<<<<<< HEAD
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-=======
   from {
     opacity: 0;
     transform: translateY(20px);
@@ -41,7 +33,6 @@ body {
 .header {
   text-align: center;
   margin-bottom: 20px;
->>>>>>> 81f60ea2fb4b04a71f9b895bbf44bfbb6b43a979
 }
 
 h1 {
@@ -52,6 +43,43 @@ h1 {
 p {
   margin-bottom: 20px;
   color: #cccccc;
+}
+
+/* Context Selector Styles */
+.context-selector {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.context-selector label {
+  display: block;
+  margin-bottom: 8px;
+  color: #cccccc;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.context-selector select {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: 2px solid #2b2b2b;
+  background-color: #2b2b2b;
+  color: white;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.context-selector select:focus {
+  outline: none;
+  border-color: #f97316;
+}
+
+.context-selector select option {
+  background-color: #2b2b2b;
+  color: white;
+  padding: 10px;
 }
 
 textarea {
