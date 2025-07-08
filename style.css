@@ -5,13 +5,14 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  min-height: 100vh;
   margin: 0;
+  padding: 20px;
 }
 
 .container {
   width: 90%;
-  max-width: 600px;
+  max-width: 700px;
   background-color: #1e1e1e;
   padding: 30px;
   border-radius: 16px;
@@ -126,6 +127,123 @@ button:hover {
   margin-top: 4px;
   border-radius: 8px;
   transition: width 0.3s ease;
+}
+
+/* Rewrite Section Styles */
+.rewrite-section {
+  margin-top: 25px;
+  padding: 20px;
+  background-color: #2b2b2b;
+  border-radius: 12px;
+  border: 2px solid #f97316;
+}
+
+.rewrite-btn {
+  background: linear-gradient(45deg, #f97316, #fb923c);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.rewrite-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4);
+}
+
+.rewrite-btn:disabled {
+  background: #666;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.rewrite-results {
+  margin-top: 15px;
+}
+
+.rewrite-suggestion {
+  background-color: #1e1e1e;
+  border: 1px solid #444;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 15px;
+  position: relative;
+}
+
+.rewrite-suggestion h4 {
+  color: #f97316;
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.rewrite-text {
+  color: #cccccc;
+  line-height: 1.5;
+  margin-bottom: 15px;
+  font-size: 15px;
+}
+
+.rewrite-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.use-btn {
+  background-color: #10b981;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  width: auto;
+}
+
+.use-btn:hover {
+  background-color: #059669;
+}
+
+.feedback-btn {
+  background-color: #374151;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  width: auto;
+}
+
+.feedback-btn:hover {
+  background-color: #4b5563;
+}
+
+.feedback-btn.active {
+  background-color: #f97316;
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #f97316;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 #warningPopup {
