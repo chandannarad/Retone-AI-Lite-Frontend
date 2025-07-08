@@ -5,13 +5,15 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  min-height: 100vh;
   margin: 0;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 .container {
   width: 90%;
-  max-width: 600px;
+  max-width: 700px;
   background-color: #1e1e1e;
   padding: 30px;
   border-radius: 16px;
@@ -84,15 +86,22 @@ p {
 
 textarea {
   width: 100%;
-  height: 100px;
+  height: 120px;
   padding: 12px;
   font-size: 16px;
   border-radius: 10px;
-  border: none;
-  resize: none;
+  border: 2px solid #2b2b2b;
+  resize: vertical;
   margin-bottom: 15px;
   background-color: #2b2b2b;
   color: white;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #f97316;
 }
 
 button {
@@ -105,10 +114,16 @@ button {
   color: white;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  font-weight: 600;
 }
 
 button:hover {
   background-color: #fb923c;
+}
+
+button:disabled {
+  background-color: #666;
+  cursor: not-allowed;
 }
 
 .results {
@@ -118,6 +133,9 @@ button:hover {
 .label {
   margin-top: 10px;
   font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .bar {
@@ -128,6 +146,116 @@ button:hover {
   transition: width 0.3s ease;
 }
 
+/* Rewrite Section Styles */
+.rewrite-section {
+  margin-top: 25px;
+  padding: 20px;
+  background-color: #2b2b2b;
+  border-radius: 12px;
+  border: 2px solid #f97316;
+  animation: slideIn 0.5s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rewrite-container {
+  text-align: left;
+}
+
+.rewrite-text {
+  background-color: #1e1e1e;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  border-left: 4px solid #f97316;
+  font-style: italic;
+  color: #e5e5e5;
+  line-height: 1.5;
+}
+
+.rewrite-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.rewrite-btn {
+  flex: 1;
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.rewrite-btn.secondary {
+  background-color: #666;
+  color: white;
+}
+
+.rewrite-btn.secondary:hover {
+  background-color: #777;
+}
+
+.feedback-section {
+  text-align: center;
+  padding-top: 15px;
+  border-top: 1px solid #444;
+}
+
+.feedback-section p {
+  margin-bottom: 10px;
+  color: #cccccc;
+  font-size: 14px;
+}
+
+.feedback-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.feedback-btn {
+  flex: 1;
+  max-width: 150px;
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.feedback-btn.positive {
+  background-color: #22c55e;
+  color: white;
+}
+
+.feedback-btn.positive:hover {
+  background-color: #16a34a;
+}
+
+.feedback-btn.negative {
+  background-color: #ef4444;
+  color: white;
+}
+
+.feedback-btn.negative:hover {
+  background-color: #dc2626;
+}
+
+.feedback-btn.clicked {
+  transform: scale(0.95);
+  opacity: 0.7;
+}
+
+/* Popup Styles */
 #warningPopup {
   position: fixed;
   top: 50%;
@@ -136,7 +264,7 @@ button:hover {
   background-color: #f97316;
   color: black;
   padding: 24px 32px;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: bold;
   border-radius: 16px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
@@ -151,4 +279,66 @@ button:hover {
 #warningPopup.show {
   opacity: 1;
   pointer-events: auto;
+}
+
+/* Loading Popup */
+.loading-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #2b2b2b;
+  color: white;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.loading-popup.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #444;
+  border-top: 4px solid #f97316;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 15px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    width: 95%;
+    padding: 20px;
+  }
+  
+  .rewrite-actions {
+    flex-direction: column;
+  }
+  
+  .feedback-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .feedback-btn {
+    max-width: 200px;
+  }
 }
