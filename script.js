@@ -3,20 +3,18 @@ let currentAnalysis = null;
 let currentRewrite = null;
 
 async function analyzeText() {
-  const text = document.getElementById("userText").value;
+  const text = document.getElementById("userText").value.trim();
   const context = document.getElementById("contextSelect").value;
   const resultsDiv = document.getElementById("results");
   const rewriteSection = document.getElementById("rewriteSection");
   const popup = document.getElementById("warningPopup");
   
-  if (!text.trim()) {
+  if (!text) {
     resultsDiv.innerHTML = "<p>Please enter some text to analyze.</p>";
     return;
   }
   
-  // Hide previous rewrite section
   rewriteSection.style.display = "none";
-  
   resultsDiv.innerHTML = "<p>Analyzing...</p>";
   
   try {
@@ -27,32 +25,30 @@ async function analyzeText() {
     });
     
     const data = await response.json();
+    console.log("Analyze API response:", data);
     
     if (data.error) {
       resultsDiv.innerHTML = `<p>Error: ${data.error}</p>`;
       return;
     }
     
-    // Store current analysis
     currentAnalysis = { text, context, data };
+    currentRewrite = null; // Reset rewrite to prevent stale data
     
-    // Show warning popup if toxic
     if (data.is_toxic) {
       popup.classList.add("show");
       setTimeout(() => popup.classList.remove("show"), 5000);
     }
     
-    // Display analysis results
     displayAnalysisResults(data, context);
     
-    // Show rewrite button if content is toxic
     if (data.is_toxic) {
       showRewriteOption();
     }
     
   } catch (error) {
     resultsDiv.innerHTML = "<p>Error connecting to server. Please try again.</p>";
-    console.error("Error:", error);
+    console.error("Analyze error:", error);
   }
 }
 
@@ -74,7 +70,6 @@ function displayAnalysisResults(data, context) {
     `;
   });
   
-  // Add overall assessment
   const overallStatus = data.is_toxic ? "⚠️ Potentially Harmful" : "✅ Respectful";
   const statusColor = data.is_toxic ? "#ef4444" : "#22c55e";
   
@@ -97,13 +92,17 @@ function showRewriteOption() {
 }
 
 async function requestRewrite() {
-  if (!currentAnalysis) return;
+  if (!currentAnalysis) {
+    console.error("No current analysis available");
+    return;
+  }
   
   const loadingPopup = document.getElementById("loadingPopup");
   const rewriteSection = document.getElementById("rewriteSection");
+  const rewriteTextDiv = document.getElementById("rewriteText");
   
-  // Show loading popup
   loadingPopup.classList.add("show");
+  rewriteTextDiv.textContent = ""; // Clear previous content
   
   try {
     const response = await fetch("https://retone-ai-lite.onrender.com/rewrite", {
@@ -116,25 +115,33 @@ async function requestRewrite() {
     });
     
     const data = await response.json();
+    console.log("Rewrite API response:", data);
     
-    // Hide loading popup
     loadingPopup.classList.remove("show");
     
     if (data.error) {
+      console.error("Rewrite error:", data.error);
       alert(`Rewrite failed: ${data.error}`);
+      rewriteSection.style.display = "none";
       return;
     }
     
-    // Store current rewrite
-    currentRewrite = data.rewritten_text;
-    
-    // Show rewrite section
-    displayRewrite(data.rewritten_text);
+    if (data.rewritten_text && data.rewritten_text.trim().toLowerCase() !== currentAnalysis.text.trim().toLowerCase()) {
+      currentRewrite = data.rewritten_text;
+      console.log("Storing rewrite:", currentRewrite);
+      displayRewrite(data.rewritten_text);
+    } else {
+      console.warn("Rewrite is identical to input or invalid:", data.rewritten_text);
+      rewriteTextDiv.textContent = "Unable to generate a different rewrite. Please try again.";
+      rewriteSection.style.display = "block";
+      rewriteSection.scrollIntoView({ behavior: "smooth" });
+    }
     
   } catch (error) {
     loadingPopup.classList.remove("show");
+    console.error("Rewrite request failed:", error);
     alert("Error getting rewrite. Please try again.");
-    console.error("Error:", error);
+    rewriteSection.style.display = "none";
   }
 }
 
@@ -142,33 +149,39 @@ function displayRewrite(rewrittenText) {
   const rewriteSection = document.getElementById("rewriteSection");
   const rewriteTextDiv = document.getElementById("rewriteText");
   
-  rewriteTextDiv.textContent = rewrittenText;
-  rewriteSection.style.display = "block";
+  console.log("Before update - rewriteTextDiv content:", rewriteTextDiv.textContent);
+  rewriteTextDiv.textContent = rewrittenText; // Explicitly set the text
+  console.log("After update - rewriteTextDiv content:", rewriteTextDiv.textContent);
   
-  // Scroll to rewrite section
-  rewriteSection.scrollIntoView({ behavior: 'smooth' });
+  rewriteSection.style.display = "block";
+  rewriteSection.scrollIntoView({ behavior: "smooth" });
 }
 
 function useRewrite() {
-  if (!currentRewrite) return;
+  if (!currentRewrite) {
+    console.error("No current rewrite available");
+    return;
+  }
   
   const textarea = document.getElementById("userText");
+  console.log("Applying rewrite to textarea:", currentRewrite);
   textarea.value = currentRewrite;
   
-  // Hide rewrite section
   document.getElementById("rewriteSection").style.display = "none";
   
-  // Show success message
   showSuccessMessage("Rewrite applied! You can now copy or send this message.");
 }
 
 function tryAgain() {
-  // Request another rewrite
+  console.log("Trying another rewrite");
   requestRewrite();
 }
 
 async function giveFeedback(rating) {
-  if (!currentAnalysis || !currentRewrite) return;
+  if (!currentAnalysis || !currentRewrite) {
+    console.error("Cannot submit feedback: missing analysis or rewrite");
+    return;
+  }
   
   const feedbackBtn = event.target;
   feedbackBtn.classList.add("clicked");
@@ -186,15 +199,14 @@ async function giveFeedback(rating) {
     });
     
     const data = await response.json();
+    console.log("Feedback response:", data);
     
-    // Show feedback confirmation
     showSuccessMessage(data.message || "Thank you for your feedback!");
     
-    // Disable feedback buttons
-    const feedbackButtons = document.querySelectorAll('.feedback-btn');
+    const feedbackButtons = document.querySelectorAll(".feedback-btn");
     feedbackButtons.forEach(btn => {
       btn.disabled = true;
-      btn.style.opacity = '0.5';
+      btn.style.opacity = "0.5";
     });
     
   } catch (error) {
@@ -204,8 +216,7 @@ async function giveFeedback(rating) {
 }
 
 function showSuccessMessage(message) {
-  // Create temporary success popup
-  const successPopup = document.createElement('div');
+  const successPopup = document.createElement("div");
   successPopup.style.cssText = `
     position: fixed;
     top: 20px;
@@ -222,9 +233,8 @@ function showSuccessMessage(message) {
   
   document.body.appendChild(successPopup);
   
-  // Remove after 3 seconds
   setTimeout(() => {
-    successPopup.style.animation = 'slideOutRight 0.3s ease';
+    successPopup.style.animation = "slideOutRight 0.3s ease";
     setTimeout(() => {
       document.body.removeChild(successPopup);
     }, 300);
@@ -232,10 +242,10 @@ function showSuccessMessage(message) {
 }
 
 function getBarColor(score) {
-  if (score >= 70) return "#dc2626"; // Red
-  if (score >= 40) return "#f97316"; // Orange
-  if (score >= 20) return "#eab308"; // Yellow
-  return "#22c55e"; // Green
+  if (score >= 70) return "#dc2626";
+  if (score >= 40) return "#f97316";
+  if (score >= 20) return "#eab308";
+  return "#22c55e";
 }
 
 function getContextDisplay(context) {
@@ -244,12 +254,10 @@ function getContextDisplay(context) {
     social: "Social Media Post",
     email: "Professional Email"
   };
-  
   return displays[context] || "Chat Message";
 }
 
-// Add CSS animations for success popup
-const style = document.createElement('style');
+const style = document.createElement("style");
 style.textContent = `
   @keyframes slideInRight {
     from {
@@ -275,7 +283,6 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// Listen for Enter key to submit text
 document.addEventListener("DOMContentLoaded", function () {
   const textarea = document.getElementById("userText");
   textarea.addEventListener("keydown", function (event) {
@@ -285,11 +292,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
   
-  // Clear results when text changes
   textarea.addEventListener("input", function() {
     const resultsDiv = document.getElementById("results");
     const rewriteSection = document.getElementById("rewriteSection");
     
+    // Only clear results if analysis exists, to prevent resetting rewrite
     if (resultsDiv.innerHTML.includes("Analysis Result")) {
       resultsDiv.innerHTML = "";
       rewriteSection.style.display = "none";
