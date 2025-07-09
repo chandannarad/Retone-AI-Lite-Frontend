@@ -1,3 +1,29 @@
+// 🔹 Offensive Word Filter (NEW)
+const offensiveMap = {
+  "fuck": "screw",
+  "shit": "mess",
+  "bitch": "person",
+  "damn": "darn",
+  "asshole": "jerk",
+  "bastard": "idiot",
+  "crap": "nonsense",
+  "dick": "jerk",
+  "piss": "irritate",
+  "slut": "woman",
+  "whore": "person",
+  "retard": "person",
+  "stupid": "unreasonable"
+};
+
+function softRewrite(text) {
+  let cleaned = text;
+  Object.keys(offensiveMap).forEach((word) => {
+    const regex = new RegExp(`\\b${word}\\b`, "gi");
+    cleaned = cleaned.replace(regex, offensiveMap[word]);
+  });
+  return cleaned;
+}
+
 // Global variables to store current analysis
 let currentAnalysis = null;
 let currentRewrite = null;
@@ -33,7 +59,7 @@ async function analyzeText() {
     }
     
     currentAnalysis = { text, context, data };
-    currentRewrite = null; // Reset rewrite to prevent stale data
+    currentRewrite = null;
     
     if (data.is_toxic) {
       popup.classList.add("show");
@@ -102,14 +128,14 @@ async function requestRewrite() {
   const rewriteTextDiv = document.getElementById("rewriteText");
   
   loadingPopup.classList.add("show");
-  rewriteTextDiv.textContent = ""; // Clear previous content
+  rewriteTextDiv.textContent = "";
   
   try {
     const response = await fetch("https://retone-ai-lite.onrender.com/rewrite", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ 
-        text: currentAnalysis.text, 
+        text: softRewrite(currentAnalysis.text),  // 🔸 Only line changed
         context: currentAnalysis.context 
       })
     });
@@ -150,7 +176,7 @@ function displayRewrite(rewrittenText) {
   const rewriteTextDiv = document.getElementById("rewriteText");
   
   console.log("Before update - rewriteTextDiv content:", rewriteTextDiv.textContent);
-  rewriteTextDiv.textContent = rewrittenText; // Explicitly set the text
+  rewriteTextDiv.textContent = rewrittenText;
   console.log("After update - rewriteTextDiv content:", rewriteTextDiv.textContent);
   
   rewriteSection.style.display = "block";
@@ -296,7 +322,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const resultsDiv = document.getElementById("results");
     const rewriteSection = document.getElementById("rewriteSection");
     
-    // Only clear results if analysis exists, to prevent resetting rewrite
     if (resultsDiv.innerHTML.includes("Analysis Result")) {
       resultsDiv.innerHTML = "";
       rewriteSection.style.display = "none";
