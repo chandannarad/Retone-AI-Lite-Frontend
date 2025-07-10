@@ -7,20 +7,21 @@ body {
   padding: 30px 20px;
   box-sizing: border-box;
   display: flex;
-  align-items: start;
+  align-items: center;
   justify-content: center;
   min-height: 100vh;
 }
 
 .container {
-  display: flex;
-  flex-direction: row;
-  text-align: center;
+  width: 90%;
+  max-width: 700px;
   margin: 0 auto;
-  gap: 30px;
-  width: 100%;
-  max-width: 1200px;
+  background-color: #1e1e1e;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
   animation: fadeIn 0.5s ease;
+  text-align: center;
 }
 
 /* Panels */
