@@ -6,58 +6,63 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
+  <div class="container" style="max-width: 1000px;">
     <div class="header">
       <h1>Retone AI Lite</h1>
-      <p>Check your message for toxicity and offensive tone before sending.</p>
-      
-      <!-- Context Selector -->
-      <div class="context-selector">
-        <label for="contextSelect">Message Context:</label>
-        <select id="contextSelect">
-          <option value="chat">💬 Chat (WhatsApp, Messenger)</option>
-          <option value="social">📱 Social Media Post (Twitter, Instagram)</option>
-          <option value="email">✉️ Email/Professional</option>
-        </select>
+      <p>Analyze and rewrite your messages to keep them respectful and kind ✨</p>
+    </div>
+
+    <div class="content" style="display: flex; gap: 30px; flex-wrap: wrap;">
+      <!-- LEFT PANEL: Input and Analysis -->
+      <div style="flex: 1 1 48%;">
+        <div class="context-selector">
+          <label for="contextSelect">Message Context:</label>
+          <select id="contextSelect">
+            <option value="chat">💬 Chat (WhatsApp, Messenger)</option>
+            <option value="social">📱 Social Media Post (Twitter, Instagram)</option>
+            <option value="email">✉️ Email/Professional</option>
+          </select>
+        </div>
+
+        <textarea id="userText" placeholder="Type your message here..."></textarea>
+        <button onclick="analyzeText()">Analyze Tone</button>
+        <div class="results" id="results"></div>
       </div>
-      
-      <textarea id="userText" placeholder="Type your message here..."></textarea>
-      <button onclick="analyzeText()">Analyze Tone</button>
-      
-      <!-- Results Section -->
-      <div class="results" id="results"></div>
-      
-      <!-- Rewrite Section (Initially Hidden) -->
-      <div class="rewrite-section" id="rewriteSection" style="display: none;">
-        <h3>Suggested Rewrite:</h3>
-        <div class="rewrite-container">
-          <div class="rewrite-text" id="rewriteText"></div>
-          <div class="rewrite-actions">
-            <button class="rewrite-btn" onclick="useRewrite()">Use This Version</button>
-            <button class="rewrite-btn secondary" onclick="tryAgain()">Try Another Rewrite</button>
-          </div>
-          <div class="feedback-section">
-            <p>Was this rewrite helpful?</p>
-            <div class="feedback-buttons">
-              <button class="feedback-btn positive" onclick="giveFeedback('helpful')">👍 Helpful</button>
-              <button class="feedback-btn negative" onclick="giveFeedback('not_helpful')">👎 Not Helpful</button>
+
+      <!-- RIGHT PANEL: Rewrite Suggestion -->
+      <div style="flex: 1 1 48%;">
+        <div class="rewrite-section" id="rewriteSection" style="display: none;">
+          <h3>Rewritten Message</h3>
+          <div class="rewrite-container">
+            <div class="rewrite-text" id="rewriteText"></div>
+            <div class="rewrite-actions">
+              <button class="rewrite-btn" onclick="useRewrite()">Use This Version</button>
+              <button class="rewrite-btn secondary" onclick="tryAgain()">Try Again</button>
+            </div>
+            <div class="feedback-section">
+              <p>Was this rewrite helpful?</p>
+              <div class="feedback-buttons">
+                <button class="feedback-btn positive" onclick="giveFeedback('helpful')">👍 Helpful</button>
+                <button class="feedback-btn negative" onclick="giveFeedback('not_helpful')">👎 Not Helpful</button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Warning -->
+    <div id="warningPopup">
+      ⚠️ <strong>Warning:</strong> Your message may contain harmful or offensive language.
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingPopup" class="loading-popup">
+      <div class="spinner"></div>
+      <p>Generating respectful rewrite...</p>
+    </div>
   </div>
-  
-  <div id="warningPopup">
-    ⚠️ <strong>Warning:</strong> Your message may contain harmful or offensive language.
-  </div>
-  
-  <!-- Loading popup -->
-  <div id="loadingPopup" class="loading-popup">
-    <div class="spinner"></div>
-    <p>Generating respectful rewrite...</p>
-  </div>
-  
+
   <script src="script.js"></script>
 </body>
 </html>
