@@ -15,6 +15,8 @@ body {
 .container {
   display: flex;
   flex-direction: row;
+  text-align: center;
+  margin: 0 auto;
   gap: 30px;
   width: 100%;
   max-width: 1200px;
